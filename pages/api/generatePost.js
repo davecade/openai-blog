@@ -4,10 +4,8 @@ export default async function handler(req, res) {
 	const config = new Configuration({
 		apiKey: process.env.OPENAI_API_KEY,
 	});
+	const { topic, keywords } = req.body;
 	const openai = new OpenAIApi(config);
-	const topic = "10 tips for dog owners";
-	const keywords =
-		"first-time dog owners, common dog health issues, best dog breeds";
 
 	const response = await openai.createChatCompletion({
 		model: "gpt-4",
@@ -32,11 +30,9 @@ export default async function handler(req, res) {
 
 	console.log("response > ", response.data.choices[0]?.message.content);
 
-	res
-		.status(200)
-		.json({
-			post: JSON.parse(
-				response.data.choices[0]?.message.content.split("\n").join("")
-			),
-		});
+	res.status(200).json({
+		post: JSON.parse(
+			response.data.choices[0]?.message.content.split("\n").join("")
+		),
+	});
 }

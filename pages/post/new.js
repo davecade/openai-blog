@@ -17,7 +17,7 @@ export default function NewPost({ test }) {
 			body: JSON.stringify({ topic, keywords }),
 		});
 		const json = await res.json();
-		setPostContent(json.post.postContent);
+		setPostContent(json.postContent);
 	};
 
 	return (

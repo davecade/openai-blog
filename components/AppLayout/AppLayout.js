@@ -48,7 +48,7 @@ export const AppLayout = ({ children }) => {
 					)}
 				</div>
 			</div>
-			<div className="bg-yellow-500">{children}</div>
+			{children}
 		</div>
 	);
 };

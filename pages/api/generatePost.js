@@ -1,6 +1,35 @@
+import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 import { Configuration, OpenAIApi } from "openai";
+import clientPromise from "../../lib/mongodb";
 
-export default async function handler(req, res) {
+// Adding withApiAuthRequired to the handler function
+// will ensure that only authenticated users can access the API route.
+// This is from the @auth0/nextjs-auth0 package.
+// So we can wrap other handlers like this to ensure that only
+// authenticated users can access them.
+export default withApiAuthRequired(async function handler(req, res) {
+	// get the currently logged in user from Auth0
+	const { user } = await getSession(req, res);
+
+	// Check if the user has any available tokens
+	const client = await clientPromise;
+	const db = client.db("OpenAIBlog");
+
+	// get the user's in the database with the same
+	// auth0Id as the currently logged in user
+	const userProfile = await db
+		.collection("users")
+		.findOne({ auth0Id: user.sub });
+
+	console.log("userProfile > ", userProfile);
+
+	// if the user doesn't have any available tokens
+	if (!userProfile?.availableTokens) {
+		// 403 means forbidden
+		res.status(403);
+		return;
+	}
+
 	const config = new Configuration({
 		apiKey: process.env.OPENAI_API_KEY,
 	});
@@ -25,7 +54,8 @@ export default async function handler(req, res) {
 		],
 	});
 
-	const postContent = postContentResponse.data.choices[0]?.message?.content;
+	const postContent =
+		postContentResponse.data.choices[0]?.message?.content || "";
 
 	const titleResponse = await openai.createChatCompletion({
 		model: "gpt-4",
@@ -77,7 +107,7 @@ export default async function handler(req, res) {
 			{
 				role: "user",
 				content: `
-					Generate SEO-friendly meta description text for the above blog post
+					Generate SEO-friendly meta description content for the above blog post
 				`,
 			},
 		],
@@ -87,9 +117,27 @@ export default async function handler(req, res) {
 	const metaDescription =
 		metaDescriptionResponse.data.choices[0]?.message?.content || "";
 
-	res.status(200).json({
-		postContent,
-		title,
-		metaDescription,
+	// update the user's available tokens in the database
+	// by subtracting 1 from the current value
+	await db
+		.collection("users")
+		.updateOne({ auth0Id: user.sub }, { $inc: { availableTokens: -1 } });
+
+	const parsed = (text) => text.split("\n").join("");
+
+	const post = await db.collection("posts").insertOne({
+		postContent: parsed(postContent),
+		title: parsed(title),
+		metaDescription: parsed(metaDescription),
+		topic,
+		keywords,
+		userId: userProfile._id,
+		created: new Date(),
 	});
-}
+
+	console.log("post > ", post);
+
+	res.status(200).json({
+		postId: post.insertedId,
+	});
+});

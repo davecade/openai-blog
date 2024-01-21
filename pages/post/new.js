@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import { AppLayout } from "../../components/AppLayout";
 import { useRouter } from "next/router";
+import { getAppProps } from "../../utils/getAppProps";
 
 export default function NewPost({ test }) {
 	const [topic, setTopic] = useState("");
@@ -67,8 +68,9 @@ NewPost.getLayout = function getLayout(page, pageProps) {
 
 // withPageAuthRequired will redirect to the login page if
 // the user is not authenticated
-export const getServerSideProps = withPageAuthRequired(() => {
-	return {
-		props: {},
-	};
+export const getServerSideProps = withPageAuthRequired({
+	async getServerSideProps(ctx) {
+		const props = await getAppProps(ctx);
+		return { props };
+	},
 });

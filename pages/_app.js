@@ -2,6 +2,11 @@ import { UserProvider } from "@auth0/nextjs-auth0/client";
 import "../styles/globals.css";
 import { DM_Sans, DM_Serif_Display } from "@next/font/google";
 
+// When using FontAwsome add this to fix loading css bug
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import { config } from "@fortawesome/fontawesome-svg-core";
+config.autoAddCss = false;
+
 const dmSans = DM_Sans({
 	weight: ["400", "500", "700"],
 	subsets: ["latin"],

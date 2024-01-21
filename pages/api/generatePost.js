@@ -34,6 +34,18 @@ export default withApiAuthRequired(async function handler(req, res) {
 		apiKey: process.env.OPENAI_API_KEY,
 	});
 	const { topic, keywords } = req.body;
+
+	//validation
+	if (!topic || !keywords) {
+		res.status(422);
+		return;
+	}
+
+	if (topic.length > 80 || keywotds.length > 80) {
+		res.status(422);
+		return;
+	}
+
 	const openai = new OpenAIApi(config);
 
 	const postContentResponse = await openai.createChatCompletion({

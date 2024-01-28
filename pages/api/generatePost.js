@@ -41,7 +41,7 @@ export default withApiAuthRequired(async function handler(req, res) {
 		return;
 	}
 
-	if (topic.length > 80 || keywotds.length > 80) {
+	if (topic.length > 80 || keywords.length > 80) {
 		res.status(422);
 		return;
 	}

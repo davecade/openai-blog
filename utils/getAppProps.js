@@ -24,6 +24,7 @@ export const getAppProps = async (ctx) => {
 		.find({
 			userId: currentlyLoggedInUser._id,
 		})
+		.limit(5) // limit to 5 posts
 		.sort({
 			created: -1,
 		})

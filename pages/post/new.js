@@ -52,7 +52,7 @@ export default function NewPost({ test }) {
 					>
 						<div>
 							<label>
-								<strong>Generate a blog post o the topic of:</strong>
+								<strong>Generate a blog post with the topic of:</strong>
 							</label>
 							<textarea
 								className={

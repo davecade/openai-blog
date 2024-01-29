@@ -15,7 +15,7 @@ export const AppLayout = ({
 }) => {
 	const { user } = useUser(); // auth0 hook for getting user info
 
-	const { posts, setPostsFromSSR } = useContext(PostsContext);
+	const { posts, setPostsFromSSR, getPosts } = useContext(PostsContext);
 
 	useEffect(() => {
 		setPostsFromSSR(postsFromSSR);
@@ -46,7 +46,12 @@ export const AppLayout = ({
 							{post.topic}
 						</Link>
 					))}
-					<div className="hover:underline text-sm text-slate-400 text-center cursor pointer mt-4">
+					<div
+						onClick={() => {
+							getPosts({ lastPostDate: posts[posts.length - 1].created });
+						}}
+						className="hover:underline text-sm text-slate-400 text-center cursor pointer mt-4"
+					>
 						Load more posts
 					</div>
 				</div>

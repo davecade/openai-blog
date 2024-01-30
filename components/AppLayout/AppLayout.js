@@ -12,6 +12,7 @@ export const AppLayout = ({
 	availableTokens,
 	posts: postsFromSSR,
 	postId,
+	postCreated,
 }) => {
 	const { user } = useUser(); // auth0 hook for getting user info
 
@@ -20,8 +21,15 @@ export const AppLayout = ({
 
 	useEffect(() => {
 		setPostsFromSSR(postsFromSSR);
-	}, [postsFromSSR, setPostsFromSSR]); // setPostsFromSSE will never change because it's a callback function
-	console.log("noMorePosts ?", noMorePosts);
+		console.log("postId > ", postId);
+		if (postId) {
+			const exists = postsFromSSR.find((p) => p._id === postId);
+			if (!exists) {
+				getPosts({ getNewerPosts: true, lastPostDate: postCreated });
+			}
+		}
+	}, [postsFromSSR, setPostsFromSSR, postId, postCreated, getPosts]); // setPostsFromSSE will never change because it's a callback function
+
 	return (
 		<div className="grid grid-cols-[300px_1fr] h-screen max-h-screen">
 			<div className="flex flex-col text-white overflow-hidden">

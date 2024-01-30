@@ -15,12 +15,13 @@ export const AppLayout = ({
 }) => {
 	const { user } = useUser(); // auth0 hook for getting user info
 
-	const { posts, setPostsFromSSR, getPosts } = useContext(PostsContext);
+	const { posts, setPostsFromSSR, getPosts, noMorePosts } =
+		useContext(PostsContext);
 
 	useEffect(() => {
 		setPostsFromSSR(postsFromSSR);
 	}, [postsFromSSR, setPostsFromSSR]); // setPostsFromSSE will never change because it's a callback function
-
+	console.log("noMorePosts ?", noMorePosts);
 	return (
 		<div className="grid grid-cols-[300px_1fr] h-screen max-h-screen">
 			<div className="flex flex-col text-white overflow-hidden">
@@ -46,14 +47,16 @@ export const AppLayout = ({
 							{post.topic}
 						</Link>
 					))}
-					<div
-						onClick={() => {
-							getPosts({ lastPostDate: posts[posts.length - 1].created });
-						}}
-						className="hover:underline text-sm text-slate-400 text-center cursor pointer mt-4"
-					>
-						Load more posts
-					</div>
+					{!noMorePosts && (
+						<div
+							onClick={() => {
+								getPosts({ lastPostDate: posts[posts.length - 1].created });
+							}}
+							className="hover:underline text-sm text-slate-400 text-center cursor pointer mt-4"
+						>
+							Load more posts
+						</div>
+					)}
 				</div>
 				<div className="bg-cyan-800 flex item-center gap-2 border-t border-t-black/50 h-20 px-2">
 					{!!user ? (

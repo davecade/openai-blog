@@ -21,8 +21,6 @@ export default withApiAuthRequired(async function handler(req, res) {
 		.collection("users")
 		.findOne({ auth0Id: user.sub });
 
-	console.log("userProfile > ", userProfile);
-
 	// if the user doesn't have any available tokens
 	if (!userProfile?.availableTokens) {
 		// 403 means forbidden

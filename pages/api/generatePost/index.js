@@ -2,6 +2,7 @@ import { withApiAuthRequired, getSession } from "@auth0/nextjs-auth0";
 import { Configuration, OpenAIApi } from "openai";
 import clientPromise from "../../../lib/mongodb";
 
+//go
 // Adding withApiAuthRequired to the handler function
 // will ensure that only authenticated users can access the API route.
 // This is from the @auth0/nextjs-auth0 package.

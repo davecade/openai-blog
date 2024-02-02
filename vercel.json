@@ -1,8 +1,8 @@
 {
 	"functions": {
-		"pages/api/*": {
+		"api/generatePost": {
 			"memory": 3008,
-			"maxDuration": 300
+			"maxDuration": 60
 		}
 	}
 }

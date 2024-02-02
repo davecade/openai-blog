@@ -1,6 +1,7 @@
 {
 	"functions": {
-		"api/generatePost.js": {
+		"api/*": {
+			"memory": 3008,
 			"maxDuration": 300
 		}
 	}
